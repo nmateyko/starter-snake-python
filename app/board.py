@@ -12,18 +12,19 @@ class Board:
         self.food = data['board']['food']
         self.snakes = data['board']['snakes']
         self.head = data['you']['body'][0]
+        self.health = data['you']['health']
 
     def wall_in_direction(self, direction):
-        new_x = self.head['x'] + direction['x']
-        new_y = self.head['y'] + direction['y']
+        new_x = self.head['x'] + self.directions_dict[direction]['x']
+        new_y = self.head['y'] + self.directions_dict[direction]['y']
         if 0 <= new_x < self.width and 0 <= new_y < self.height:
             return False
         else:
             return True
 
     def snake_in_direction(self, direction):
-        new_x = self.head['x'] + direction['x']
-        new_y = self.head['y'] + direction['y']
+        new_x = self.head['x'] + self.directions_dict[direction]['x']
+        new_y = self.head['y'] + self.directions_dict[direction]['y']
         occupied = False
         for s in self.snakes:
             for pos in s['body']:

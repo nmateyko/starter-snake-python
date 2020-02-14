@@ -55,20 +55,17 @@ def start():
 def move():
     data = bottle.request.json
     b = Board(data)
-#    print("move self data: ", b.current)
     directions = ['up', 'down', 'left', 'right']
     random.shuffle(directions)
-    directions_dict = {'up': {'x':  0, 'y': -1},
-                     'down': {'x':  0, 'y':  1},
-                     'left': {'x': -1, 'y':  0},
-                    'right': {'x':  1, 'y':  0}}
     good_directions = []
     for d in directions:
-        if (not b.wall_in_direction(directions_dict[d])
-                and not b.snake_in_direction(directions_dict[d])):
+        if (not b.wall_in_direction(d)
+                and not b.snake_in_direction(d)):
             good_directions.append(d)
-    if len(good_directions) > 0:
+    if len(good_directions) > 0 and b.health < 20:
         direction = good_directions[b.towards_food(good_directions)]
+    elif len(good_directions) > 0:
+        direction = random.choice(good_directions)
     else:
         direction = 'up'
 
