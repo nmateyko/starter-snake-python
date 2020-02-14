@@ -2,6 +2,7 @@ import json
 import os
 import random
 import bottle
+from board import Board
 
 from api import ping_response, start_response, move_response, end_response
 
@@ -43,9 +44,9 @@ def start():
             initialize your snake state here using the
             request's data if necessary.
     """
-    print(json.dumps(data))
+    print("start data: " + json.dumps(data))
 
-    color = "#00FF00"
+    color = "#00FFFF"
 
     return start_response(color)
 
@@ -53,15 +54,23 @@ def start():
 @bottle.post('/move')
 def move():
     data = bottle.request.json
-
-    """
-    TODO: Using the data from the endpoint request object, your
-            snake AI must choose a direction to move in.
-    """
-    print(json.dumps(data))
-
+    b = Board(data)
+#    print("move self data: ", b.current)
     directions = ['up', 'down', 'left', 'right']
-    direction = random.choice(directions)
+    random.shuffle(directions)
+    directions_dict = {'up': {'x':  0, 'y': -1},
+                     'down': {'x':  0, 'y':  1},
+                     'left': {'x': -1, 'y':  0},
+                    'right': {'x':  1, 'y':  0}}
+    good_directions = []
+    for d in directions:
+        if (not b.wall_in_direction(directions_dict[d])
+                and not b.snake_in_direction(directions_dict[d])):
+            good_directions.append(d)
+    if len(good_directions) > 0:
+        direction = good_directions[b.towards_food(good_directions)]
+    else:
+        direction = 'up'
 
     return move_response(direction)
 
